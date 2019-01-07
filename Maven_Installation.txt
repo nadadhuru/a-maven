@@ -1,0 +1,26 @@
+https://www.tecmint.com/install-apache-maven-on-centos-7/
+
+VARS:
+---
+maven_repo: http://apache.spinellicreations.com/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.zip
+maven_version: "3.6.0"
+maven_pkg: apache-maven-{{maven_version}}-bin.zip
+maven_home: /usr/local/src/apache-maven-{{maven_version}}
+
+TASKS:
+---
+- name: Install package Maven using generic package manager
+  package:
+    name: "{{maven_pkg}}"
+    state: present
+
+- name: Create a maven.sh file in profiles.d folder to set Path
+  template:
+    src: maven.sh.j2
+    dest: /etc/profile.d/maven.sh
+
+TEMPLATES:
+file name: maven.sh.j2
+---
+export M2_HOME={{maven_home}}
+export PATH={{maven_home}}/bin:${PATH}
