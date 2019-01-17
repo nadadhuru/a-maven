@@ -1,0 +1,44 @@
+yum -y install sudo vim wget net-tools java-1.8.0-openjdk.x86_64
+
+mkdir /opt/nexus
+
+cd /opt/nexus
+
+wget https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+
+tar -xzvf latest-unix.tar.gz
+
+ln -s nexus-3.15.0-01 nexus
+
+cp /opt/nexus/nexus/bin/nexus /etc/init.d/
+
+useradd nexus
+chown -R nexus:nexus /opt/nexus/
+chown nexus:nexus /etc/init.d/nexus
+
+service firewalld status
+	service firewalld start
+
+<---check if below 2 is needed or not -->
+firewall-cmd --zone=public --permanent --add-port=8081/tcp
+firewall-cmd --reload
+
+cd /opt/nexus/nexus/bin/
+	vim nexus
+		INSTALL4J_JAVA_HOME_OVERRIDE=/usr/lib/jvm/jre
+		NEXUS_HOME="/opt/nexus/nexus"
+
+cd /opt/nexus/nexus/etc/
+	vim nexus-default.properties
+		nexus-context-path=/nexus	
+
+cd /opt/nexus/nexus/bin/
+	./nexus run
+	./nexus status
+	./nexus start
+
+http://localhost:8081/nexus
+
+
+
+http://40.122.117.17:8081/nexus/repository/maven-project-staging/
